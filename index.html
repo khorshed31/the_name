@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#10101b" />
+  <title>একটি না-বলা কথা</title>
+  <style>
+    :root {
+      --ink: #242333;
+      --paper: #f8f1e6;
+      --muted: #a9a7ba;
+      --gold: #e4c58a;
+      --rose: #d98f9b;
+      --night: #10101b;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-height: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: #f8f6fb;
+      background:
+        radial-gradient(ellipse at 15% 15%, rgba(97, 77, 133, .28), transparent 38%),
+        radial-gradient(ellipse at 85% 80%, rgba(130, 71, 91, .20), transparent 36%),
+        linear-gradient(145deg, #10101b, #171625 55%, #10101b);
+      font-family: "Noto Serif Bengali", "SolaimanLipi", "Kalpurush", Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .14;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+      z-index: 0;
+    }
+
+    .screen {
+      min-height: 100vh;
+      width: 100%;
+      display: grid;
+      place-items: center;
+      padding: 34px 18px;
+      position: relative;
+      z-index: 1;
+      animation: screenIn .8s ease both;
+    }
+
+    .hidden { display: none !important; }
+
+    .intro-card {
+      width: min(100%, 620px);
+      padding: clamp(28px, 6vw, 58px);
+      text-align: center;
+      border: 1px solid rgba(228, 197, 138, .23);
+      border-radius: 26px;
+      background: linear-gradient(145deg, rgba(34, 32, 51, .91), rgba(23, 22, 37, .88));
+      box-shadow: 0 28px 90px rgba(0, 0, 0, .35);
+      backdrop-filter: blur(12px);
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font: 600 11px/1.5 Arial, sans-serif;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    .ornament {
+      color: var(--rose);
+      font-size: 22px;
+      margin-bottom: 12px;
+      opacity: .9;
+    }
+
+    h1, h2, p { margin-top: 0; }
+
+    .intro-card h1 {
+      font-size: clamp(27px, 5vw, 42px);
+      line-height: 1.45;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    .intro-card .description {
+      color: #c7c3d2;
+      font-size: clamp(15px, 2.5vw, 17px);
+      line-height: 1.95;
+      margin: 0 auto 20px;
+      max-width: 470px;
+    }
+
+    .warning {
+      color: #e7c9ce;
+      font-size: 14px;
+      line-height: 1.8;
+      border-top: 1px solid rgba(255,255,255,.09);
+      border-bottom: 1px solid rgba(255,255,255,.09);
+      padding: 14px 4px;
+      margin: 24px 0 28px;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 13px 25px;
+      min-width: 160px;
+      cursor: pointer;
+      font: 600 15px/1.4 "Noto Serif Bengali", "SolaimanLipi", "Kalpurush", sans-serif;
+      transition: transform .25s ease, box-shadow .25s ease, background .25s ease, border-color .25s ease;
+    }
+
+    button:hover { transform: translateY(-3px); }
+    button:focus-visible { outline: 3px solid #f2d9a8; outline-offset: 4px; }
+
+    .primary-btn {
+      color: #211d2b;
+      background: linear-gradient(135deg, #f0d8a8, #d9b779);
+      box-shadow: 0 8px 28px rgba(219, 185, 121, .18);
+    }
+    .primary-btn:hover { box-shadow: 0 12px 35px rgba(219, 185, 121, .28); }
+
+    .secondary-btn {
+      color: #d6d1df;
+      background: rgba(255,255,255,.035);
+      border-color: rgba(255,255,255,.17);
+    }
+    .secondary-btn:hover { background: rgba(255,255,255,.08); }
+
+    .stop-message {
+      color: #c9c4d2;
+      line-height: 2;
+      font-size: 17px;
+      margin: 15px 0 0;
+    }
+
+    /* The letter */
+    .letter-wrap { width: min(100%, 790px); }
+
+    .letter-topline {
+      text-align: center;
+      color: var(--gold);
+      font: 11px/1.5 Arial, sans-serif;
+      letter-spacing: .22em;
+      margin-bottom: 17px;
+      opacity: .9;
+    }
+
+    .letter {
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(255,255,255,.24), rgba(255,255,255,.24)),
+        repeating-linear-gradient(to bottom, transparent 0, transparent 35px, rgba(94, 82, 67, .055) 36px),
+        var(--paper);
+      border-radius: 5px 5px 16px 5px;
+      padding: clamp(28px, 6vw, 60px) clamp(24px, 7vw, 72px);
+      position: relative;
+      box-shadow: 0 25px 75px rgba(0,0,0,.38);
+      animation: paperDrop .9s cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .letter::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 17px;
+      bottom: 0;
+      width: 1px;
+      background: rgba(191, 119, 119, .22);
+    }
+
+    .letter::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      border-style: solid;
+      border-width: 0 42px 42px 0;
+      border-color: transparent #dfd3c1 transparent transparent;
+      filter: drop-shadow(-2px 2px 2px rgba(0,0,0,.08));
+    }
+
+    .letter-date {
+      text-align: right;
+      color: #847b70;
+      font-size: 13px;
+      margin-bottom: 25px;
+    }
+
+    .letter h2 {
+      font-size: clamp(22px, 4vw, 29px);
+      line-height: 1.5;
+      color: #45394a;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+
+    .letter-copy {
+      font-size: clamp(15px, 2.2vw, 17px);
+      line-height: 2.15;
+      color: #393642;
+      white-space: pre-line;
+    }
+
+    .letter-copy p { margin: 0 0 17px; }
+
+    .letter-signoff {
+      text-align: right;
+      margin-top: 28px;
+      color: #77616a;
+      line-height: 1.9;
+      font-size: 15px;
+    }
+
+    .letter-actions {
+      text-align: center;
+      margin-top: 28px;
+    }
+
+    .small-note {
+      color: #aaa5b7;
+      font-size: 12px;
+      line-height: 1.8;
+      margin-top: 14px;
+    }
+
+    /* Reveal scene */
+    .reveal-screen { text-align: center; overflow: hidden; }
+
+    .reveal-heading {
+      color: #d6d0df;
+      font-size: clamp(18px, 3vw, 23px);
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+
+    .reveal-subtitle {
+      color: #a7a2b4;
+      font-size: 14px;
+      margin-bottom: 35px;
+    }
+
+    .countdown-ring {
+      width: 62px;
+      height: 62px;
+      border: 1px solid rgba(228,197,138,.5);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 28px;
+      color: var(--gold);
+      font: 500 19px/1 Arial, sans-serif;
+      box-shadow: 0 0 35px rgba(228,197,138,.12), inset 0 0 20px rgba(228,197,138,.05);
+      animation: breathe 1.5s ease-in-out infinite;
+    }
+
+    .progress-track {
+      width: min(260px, 70vw);
+      height: 2px;
+      background: rgba(255,255,255,.13);
+      border-radius: 5px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--rose), var(--gold));
+      animation: progress 8s linear forwards;
+    }
+
+    .portrait-card {
+      width: min(100%, 380px);
+      margin: 0 auto;
+      padding: 17px 17px 25px;
+      border-radius: 20px;
+      background: linear-gradient(150deg, rgba(42, 39, 57, .95), rgba(25, 24, 39, .96));
+      border: 1px solid rgba(228,197,138,.34);
+      box-shadow: 0 25px 90px rgba(0,0,0,.44), 0 0 55px rgba(217,143,155,.08);
+      opacity: 0;
+      filter: blur(22px);
+      transform: scale(.88) translateY(18px);
+      clip-path: inset(48% 48% 48% 48% round 20px);
+      animation: cardReveal 8s cubic-bezier(.18,.7,.18,1) forwards;
+    }
+
+    .photo-frame {
+      width: 100%;
+      aspect-ratio: 4 / 4.35;
+      overflow: hidden;
+      border-radius: 13px;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(228,197,138,.18), transparent 34%),
+        linear-gradient(145deg, #38344b, #201f30);
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.09);
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .photo-placeholder {
+      color: #d9c9ae;
+      font-size: 15px;
+      line-height: 1.9;
+      padding: 20px;
+    }
+
+    .name-label {
+      color: #b7afc2;
+      font-size: 12px;
+      letter-spacing: .18em;
+      margin: 22px 0 8px;
+    }
+
+    .friend-name {
+      color: #f3dcb1;
+      font-size: clamp(27px, 5vw, 35px);
+      line-height: 1.5;
+      font-weight: 600;
+      margin: 0;
+      text-shadow: 0 0 22px rgba(243,220,177,.2);
+    }
+
+    .reveal-caption {
+      color: #a9a4b4;
+      font-size: 13px;
+      line-height: 1.8;
+      margin-top: 24px;
+      opacity: 0;
+      animation: captionIn 1.1s ease 7.2s forwards;
+    }
+
+    .glitch-out {
+      animation: glitchOut .95s steps(2, end) forwards !important;
+    }
+
+    .final-note {
+      width: min(100%, 480px);
+      color: #c9c2d0;
+      font-size: clamp(16px, 3vw, 19px);
+      line-height: 2;
+      opacity: 0;
+      animation: finalFade 1.2s ease forwards;
+    }
+
+    .restart-btn {
+      margin-top: 22px;
+      min-width: 0;
+      padding: 10px 20px;
+      color: #d2c9d7;
+      background: transparent;
+      border-color: rgba(255,255,255,.18);
+      font-size: 13px;
+      opacity: 0;
+      animation: finalFade 1s ease .5s forwards;
+    }
+
+    @keyframes screenIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes paperDrop { from { opacity: 0; transform: translateY(22px) rotateX(5deg); } to { opacity: 1; transform: translateY(0) rotateX(0); } }
+    @keyframes breathe { 0%,100% { transform: scale(1); box-shadow: 0 0 25px rgba(228,197,138,.1); } 50% { transform: scale(1.07); box-shadow: 0 0 38px rgba(228,197,138,.22); } }
+    @keyframes progress { to { width: 100%; } }
+    @keyframes cardReveal {
+      0% { opacity: 0; filter: blur(22px); transform: scale(.88) translateY(18px); clip-path: inset(48% 48% 48% 48% round 20px); }
+      32% { opacity: .22; filter: blur(13px); transform: scale(.94) translateY(8px); clip-path: inset(25% 25% 25% 25% round 20px); }
+      72% { opacity: .82; filter: blur(4px); transform: scale(1.01) translateY(0); clip-path: inset(3% 3% 3% 3% round 20px); }
+      100% { opacity: 1; filter: blur(0); transform: scale(1) translateY(0); clip-path: inset(0 0 0 0 round 20px); }
+    }
+    @keyframes captionIn { to { opacity: 1; } }
+    @keyframes glitchOut {
+      0% { opacity: 1; transform: translate(0); filter: none; clip-path: inset(0); }
+      15% { transform: translate(-5px, 2px) skewX(5deg); filter: hue-rotate(55deg) contrast(1.5); clip-path: inset(12% 0 68% 0); }
+      30% { transform: translate(5px, -2px) skewX(-5deg); filter: hue-rotate(-65deg) contrast(1.8); clip-path: inset(48% 0 28% 0); }
+      45% { transform: translate(-3px, 0); filter: saturate(2); clip-path: inset(75% 0 5% 0); }
+      60% { transform: translate(3px, 1px); opacity: .75; clip-path: inset(20% 0 58% 0); }
+      78% { transform: translate(-2px, -1px); opacity: .35; filter: blur(4px); clip-path: inset(0 0 0 0); }
+      100% { transform: scale(.96); opacity: 0; filter: blur(14px); }
+    }
+    @keyframes finalFade { to { opacity: 1; } }
+
+    @media (max-width: 520px) {
+      .screen { padding: 22px 14px; }
+      .intro-card { border-radius: 20px; }
+      .letter { padding: 34px 25px 38px 31px; }
+      .letter::before { left: 13px; }
+      .button-row button { width: 100%; }
+      .portrait-card { max-width: 330px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .portrait-card { opacity: 1; filter: none; transform: none; clip-path: none; }
+      .reveal-caption, .final-note, .restart-btn { opacity: 1; }
+    }
+
+
+    /* Vintage Bangladeshi postal-letter treatment */
+    :root {
+      --ink: #30271f;
+      --paper: #f3e6c9;
+      --muted: #786a58;
+      --gold: #d8b77c;
+      --rose: #a34c43;
+      --night: #241b16;
+    }
+
+    body {
+      color: #f4e9d4;
+      background:
+        radial-gradient(ellipse at 16% 12%, rgba(177, 119, 65, .22), transparent 36%),
+        radial-gradient(ellipse at 86% 84%, rgba(112, 54, 39, .22), transparent 39%),
+        repeating-linear-gradient(7deg, rgba(255,255,255,.018) 0 1px, transparent 1px 5px),
+        linear-gradient(135deg, #211813, #3b291e 48%, #241a15);
+    }
+
+    .intro-card {
+      color: #35291f;
+      border: 1px solid rgba(94, 65, 42, .45);
+      border-radius: 4px;
+      background:
+        radial-gradient(ellipse at 12% 8%, rgba(255,255,255,.42), transparent 34%),
+        repeating-linear-gradient(0deg, transparent 0 31px, rgba(97, 119, 139, .07) 32px),
+        linear-gradient(135deg, #f1e4c9, #e4d1ad);
+      box-shadow: 0 28px 80px rgba(0,0,0,.48), inset 0 0 32px rgba(128, 91, 48, .10);
+      backdrop-filter: none;
+    }
+
+    .eyebrow { color: #8a4b3d; letter-spacing: .16em; }
+    .ornament { color: #a34c43; }
+    .intro-card h1 { color: #3a2d23; }
+    .intro-card .description { color: #665443; }
+    .warning {
+      color: #70473b;
+      border-color: rgba(125, 73, 53, .22);
+    }
+    .primary-btn {
+      color: #f6ead3;
+      background: linear-gradient(135deg, #8d4037, #642e2a);
+      box-shadow: 0 8px 24px rgba(91, 42, 35, .2);
+    }
+    .primary-btn:hover { box-shadow: 0 12px 32px rgba(91, 42, 35, .28); }
+    .secondary-btn {
+      color: #604b3b;
+      background: rgba(255,255,255,.25);
+      border-color: rgba(92, 66, 47, .28);
+    }
+    .secondary-btn:hover { background: rgba(255,255,255,.42); }
+    .stop-message { color: #6d5947; }
+
+    .letter-wrap { width: min(100%, 850px); }
+    .letter-topline {
+      color: #e2c99c;
+      letter-spacing: .13em;
+      text-shadow: 0 1px 5px rgba(0,0,0,.4);
+    }
+    .letter {
+      border-radius: 2px;
+      border: 1px solid rgba(112, 81, 49, .56);
+      background:
+        radial-gradient(ellipse at 6% 5%, rgba(255,255,255,.48), transparent 28%),
+        radial-gradient(ellipse at 96% 92%, rgba(153, 111, 60, .10), transparent 32%),
+        repeating-linear-gradient(to bottom, transparent 0, transparent 34px, rgba(91, 118, 144, .11) 35px),
+        linear-gradient(110deg, #f4e8ce, #ecdbb8 58%, #f2e4c7);
+      box-shadow: 0 28px 80px rgba(0,0,0,.5), inset 0 0 55px rgba(123, 82, 39, .10);
+    }
+    .letter::before {
+      left: 31px;
+      width: 1px;
+      background: rgba(169, 69, 61, .36);
+    }
+    .letter::after {
+      border-width: 0 48px 48px 0;
+      border-color: transparent #d9c7a5 transparent transparent;
+      filter: drop-shadow(-2px 3px 3px rgba(71, 48, 28, .14));
+    }
+    .letter-date { color: #806c55; }
+    .letter h2 { color: #633d33; }
+    .letter-copy { color: #352d27; }
+    .letter-signoff { color: #704a3d; }
+    .small-note { color: #ddcdb5; }
+
+    .letter-paperhead {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 0 0 22px;
+      margin: 0 0 23px;
+      border-bottom: 1px dashed rgba(115, 83, 54, .35);
+    }
+    .address-lines {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 5px 12px;
+      color: #8a755d;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .address-lines strong { color: #514031; font-weight: 600; }
+    .postage-stamp {
+      flex: 0 0 86px;
+      min-height: 96px;
+      padding: 7px 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #7b4238;
+      border: 2px dashed rgba(148, 72, 59, .68);
+      outline: 1px solid rgba(148, 72, 59, .32);
+      outline-offset: -6px;
+      background: rgba(176, 101, 75, .07);
+      transform: rotate(3deg);
+    }
+    .postage-stamp span { font-size: 10px; letter-spacing: .08em; }
+    .postage-stamp strong { font-size: 30px; line-height: 1.25; font-weight: 700; }
+    .postage-stamp small { font-size: 9px; }
+    .postmark {
+      margin: 0 0 20px auto;
+      width: 105px;
+      height: 48px;
+      border-right: 2px solid rgba(47, 83, 109, .48);
+      position: relative;
+      color: rgba(47, 83, 109, .72);
+      text-align: right;
+      padding: 5px 8px 0 0;
+      font-size: 10px;
+      line-height: 1.5;
+      letter-spacing: .05em;
+    }
+    .postmark::before {
+      content: "";
+      position: absolute;
+      right: 8px;
+      top: -10px;
+      width: 54px;
+      height: 54px;
+      border: 1px solid rgba(47, 83, 109, .48);
+      border-radius: 50%;
+    }
+    .postmark strong { display: block; font-size: 12px; font-weight: 700; }
+    .letter-date { margin-bottom: 13px; }
+    .letter h2 { margin-bottom: 20px; }
+
+    .reveal-heading { color: #f0dfc5; }
+    .reveal-subtitle { color: #c7b49a; }
+    .countdown-ring {
+      color: #e6c99b;
+      border-color: rgba(225, 194, 143, .6);
+      box-shadow: 0 0 35px rgba(197, 151, 91, .12), inset 0 0 20px rgba(197, 151, 91, .06);
+    }
+    .progress-fill { background: linear-gradient(90deg, #a34c43, #e1c28d); }
+    .portrait-card {
+      border-radius: 4px;
+      background: linear-gradient(145deg, #f1e3c6, #d9c4a0);
+      border: 8px solid #e7d6b5;
+      box-shadow: 0 25px 90px rgba(0,0,0,.5), 0 0 0 1px rgba(105,74,43,.65), inset 0 0 0 1px rgba(95,68,41,.24);
+    }
+    .photo-frame {
+      border-radius: 1px;
+      background: #cdbb99;
+      border: 1px solid rgba(102, 75, 48, .35);
+    }
+    .photo-frame img { filter: saturate(.88) sepia(.12); }
+    .photo-placeholder { color: #70543b; }
+    .name-label { color: #806548; }
+    .friend-name { color: #573a30; text-shadow: none; }
+    .reveal-caption { color: #decdb5; }
+    .final-note { color: #eadcc7; }
+    .restart-btn { color: #eadcc7; border-color: rgba(234,220,199,.3); }
+
+    @media (max-width: 520px) {
+      .letter { padding: 27px 20px 34px 34px; }
+      .letter-paperhead { gap: 10px; }
+      .postage-stamp { flex-basis: 72px; min-height: 84px; }
+      .address-lines { font-size: 11px; gap: 4px 8px; }
+    }
+
+  </style>
+</head>
+<body>
+  <main>
+    <!-- STEP 1: Confirmation -->
+    <section id="introScreen" class="screen">
+      <div class="intro-card">
+        <div class="eyebrow">A LETTER THAT WAS NEVER SENT</div>
+        <div class="ornament">✦</div>
+        <h1>একটি নাম জানার আগে,<br />একটু প্রস্তুতি প্রয়োজন</h1>
+        <p class="description">
+          এই লেখার শেষ অংশে একটি নাম প্রকাশ পাবে।
+          নামটি জানার পর মনে কিছু প্রশ্ন বা অস্বস্তি তৈরি হতে পারে।
+        </p>
+        <div class="warning">
+          কোনো তাড়া নেই, কোনো বাধ্যবাধকতাও নেই।<br />
+          আপনি কি সত্যিই সেই নামটি জানার জন্য মানসিকভাবে প্রস্তুত?
+        </div>
+        <div id="introButtons" class="button-row">
+          <button id="yesBtn" class="primary-btn" type="button">হ্যাঁ, আমি প্রস্তুত</button>
+          <button id="noBtn" class="secondary-btn" type="button">না, এখানেই থামি</button>
+        </div>
+        <p id="stopMessage" class="stop-message hidden" aria-live="polite">
+          ঠিক আছে। আপনার সিদ্ধান্তকে সম্মান করি।<br />কিছু কথা না জানলেও পৃথিবী ঠিকই সুন্দর থাকে।
+        </p>
+      </div>
+    </section>
+
+    <!-- STEP 2: The letter -->
+    <section id="letterScreen" class="screen hidden">
+      <div class="letter-wrap">
+        <div class="letter-topline">একটি পুরোনো চিঠির খসড়া · ঠিকানাবিহীন</div>
+        <article class="letter">
+          <div class="letter-paperhead">
+            <div class="address-lines">
+              <span>প্রেরক :</span><strong>একজন নীরব লেখক</strong>
+              <span>প্রাপক :</span><strong>ঠিকানা লেখা হয়নি</strong>
+              <span>ডাকঘর :</span><strong>স্মৃতির ভেতর</strong>
+            </div>
+            <div class="postage-stamp" aria-label="স্মৃতির ডাকের অলংকার">
+              <span>বাংলা ডাক</span>
+              <strong>ব</strong>
+              <small>স্মৃতির ডাক</small>
+            </div>
+          </div>
+          <div class="postmark"><strong>অপ্রেরিত</strong>একটি পুরোনো দিন</div>
+          <div class="letter-date">তারিখ: এক শীতল বিকেল</div>
+          <h2>কিছু না-পাঠানো কথা</h2>
+          <div class="letter-copy">
+            <p>এই কাগজে আসলে কোনো ঠিকানা লেখা নেই। তবু কিছু কথা আছে, যেগুলো অনেক দিন ধরে মনের ভাঁজে পড়ে আছে—পুরোনো চিঠির মতো; পাঠানো হয়নি, তবু ফেলে দেওয়াও যায়নি।</p>
+            <p>মানুষের জীবনে কিছু মুহূর্ত থাকে, যেগুলোর কোনো ঘোষণা থাকে না। একেবারে সাধারণ দিনের ভেতর হঠাৎ কারও উপস্থিতি মনে অকারণেই আলাদা একটি দাগ রেখে যায়। কেন এমন হয়, তা বোঝা যায় না; হয়তো সব ভালো লাগার পেছনে কোনো যুক্তি থাকে না।</p>
+            <p>প্রথম পরিচয়ের সময় এই সত্যটি জানা ছিল না। বেশ কিছুদিন পরে, অন্য এক প্রসঙ্গে জানতে পারি—মানুষটি ইতিমধ্যেই বিবাহিত। খবরটি জানার পর মনটা অদ্ভুতভাবে চুপ হয়ে গিয়েছিল। কারণ, তত দিনে অজান্তেই তাঁর কথা, স্বভাব, আর ছোট ছোট কিছু বিষয় মনে আলাদা জায়গা করে নিয়েছিল। কষ্টটা কোনো অধিকার হারানোর ছিল না; বরং দেরিতে জানা এক বাস্তবতার সামনে নিজের অজান্তে জন্ম নেওয়া ভালো লাগাটুকুকে থামিয়ে দেওয়ার নীরব মনখারাপ।</p>
+            <p>মাঝে মাঝে মনে হয়েছে, সব ভালো লাগার পরিণতি প্রেম হতে হবে এমন নয়; সম্মান আর সীমারেখা অক্ষুণ্ণ রেখে পরিচয়ের সাধারণ সৌজন্য, হয়তো বন্ধুত্বের একটি নিরীহ জায়গাও থাকতে পারে। তবে সেই ভাবনা কখনোই কারও ব্যক্তিগত জীবন, সংসার কিংবা স্বস্তির ওপর কোনো দাবি হয়ে উঠতে পারে না।</p>
+            <p>সময় নিয়ে নিজেকেই বুঝিয়েছি, ভালো লাগা মানেই কাউকে পাওয়ার ইচ্ছা নয়; অনুভূতি থাকলেই তার কোনো পরিণতি দাবি করতে হয় না। কখনো কারও প্রতি মমতা থাকলেও সবচেয়ে সুন্দর আচরণ হতে পারে তার জীবনের পরিসর অক্ষুণ্ণ রেখে নিজের দূরত্বটুকু বজায় রাখা। সব অনুভূতির গন্তব্য থাকে না, আর সব না-পাওয়ারও কোনো নাম দিতে হয় না।</p>
+            <p>এই কথাগুলো কাউকে বলা হয়নি। হয়তো বলার প্রয়োজন মনে হয়নি, হয়তো মনে হয়েছিল—কিছু অনুভূতি মুখে আনলেই তাদের ভার বেড়ে যায়, আর নীরব থাকলে তারা ধীরে ধীরে শান্ত হয়ে আসে। তবু কয়েক দিন ধরে পুরোনো স্মৃতির মতো কিছু কথা বারবার ফিরে আসছিল। তাই আজ কাগজে রেখে দিলাম; কারও কাছ থেকে কোনো উত্তর পাওয়ার জন্য নয়, শুধু নিজের ভেতরের অগোছালো ভাবনাগুলো একটু গুছিয়ে নেওয়ার জন্য।</p>
+            <p>কিছু মুহূর্ত, কিছু অচেনা অনুভূতি কিংবা কিছু নাম—সময় পেরিয়ে গেলেও মনের কোনো এক কোণে থেকে যায়। তাদের প্রকাশ করা জরুরি নয়, কোনো পরিণতি দেওয়াও জরুরি নয়। কখনো কখনো শুধু মেনে নেওয়াই যথেষ্ট—একসময় কিছু একটা ভালো লেগেছিল। তারপর জীবন নিজের নিয়মে এগিয়ে গেছে। বাকিটুকু স্মৃতির কাছেই থাক।</p>
+          </div>
+          <div class="letter-signoff">
+            ইতি,<br />যে চিঠিটি কখনো পাঠানো হয়নি।
+          </div>
+        </article>
+        <div class="letter-actions">
+          <button id="revealBtn" class="primary-btn" type="button">শেষ অংশটি দেখুন</button>
+          <p class="small-note">পরের অংশে যাওয়ার আগে একবার ভেবে নিন—আপনি কি নামটি জানতে চান?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: 8-second name and photo reveal -->
+    <section id="revealScreen" class="screen reveal-screen hidden" aria-live="polite">
+      <div id="countdownStage">
+        <div class="eyebrow">THE NAME BEHIND THE LETTER</div>
+        <div class="reveal-heading">কিছু মুহূর্ত অপেক্ষা করুন…</div>
+        <p class="reveal-subtitle">নামটি ধীরে ধীরে প্রকাশিত হবে</p>
+        <div class="countdown-ring" id="countdownNumber">8</div>
+        <div class="progress-track"><div class="progress-fill"></div></div>
+      </div>
+
+      <div id="identityStage" class="hidden">
+        <div class="eyebrow">NOW YOU KNOW</div>
+        <div id="portraitCard" class="portrait-card">
+          <div class="photo-frame">
+            <img id="friendPhoto" src="img.jpg" alt="ছবি" />
+            <div id="photoPlaceholder" class="photo-placeholder hidden">এখানে ছবিটি দেখা যাবে</div>
+          </div>
+          <div class="name-label">AFSANA AKTER BRISTY</div>
+          <h2 id="friendName" class="friend-name">AFSANA AKTER BRISTY</h2>
+        </div>
+        <p class="reveal-caption">কিছু অনুভূতি উচ্চারণ করলেই সম্পূর্ণ হয় না—কখনো শুধু জানিয়ে দেওয়াই যথেষ্ট।</p>
+      </div>
+
+      <div id="endingStage" class="hidden">
+        <p class="final-note">কিছু কথা বলা হলো।<br />বাকিটুকু নীরবতার কাছেই থাক।</p>
+        <button id="restartBtn" class="restart-btn" type="button">শুরু থেকে দেখুন</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /* =====================================================
+       PERSONALIZE THESE TWO VALUES BEFORE SHARING THE SITE
+       1) FRIEND_NAME: write the name exactly as it should appear.
+       2) FRIEND_PHOTO: use the photo filename, e.g. "friend.jpg".
+       Keep the photo in the same folder as index.html.
+       ===================================================== */
+    const FRIEND_NAME = "AFSANA AKTER BRISTY";
+    const FRIEND_PHOTO = "img.jpg";
+
+    const introScreen = document.getElementById("introScreen");
+    const letterScreen = document.getElementById("letterScreen");
+    const revealScreen = document.getElementById("revealScreen");
+    const introButtons = document.getElementById("introButtons");
+    const stopMessage = document.getElementById("stopMessage");
+    const countdownStage = document.getElementById("countdownStage");
+    const identityStage = document.getElementById("identityStage");
+    const endingStage = document.getElementById("endingStage");
+    const portraitCard = document.getElementById("portraitCard");
+    const countdownNumber = document.getElementById("countdownNumber");
+    const friendPhoto = document.getElementById("friendPhoto");
+    const photoPlaceholder = document.getElementById("photoPlaceholder");
+    const friendName = document.getElementById("friendName");
+
+    document.getElementById("yesBtn").addEventListener("click", () => {
+      introScreen.classList.add("hidden");
+      letterScreen.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.getElementById("noBtn").addEventListener("click", () => {
+      introButtons.classList.add("hidden");
+      stopMessage.classList.remove("hidden");
+    });
+
+    document.getElementById("revealBtn").addEventListener("click", () => {
+      letterScreen.classList.add("hidden");
+      revealScreen.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      startReveal();
+    });
+
+    function startReveal() {
+      friendName.textContent = FRIEND_NAME;
+      friendPhoto.src = FRIEND_PHOTO;
+      friendPhoto.addEventListener("error", () => {
+        friendPhoto.classList.add("hidden");
+        photoPlaceholder.classList.remove("hidden");
+      }, { once: true });
+
+      // Start the 8-second photo/name reveal and countdown together.
+      identityStage.classList.remove("hidden");
+      let remaining = 8;
+      const countdown = window.setInterval(() => {
+        remaining -= 1;
+        countdownNumber.textContent = Math.max(remaining, 0);
+        if (remaining <= 0) {
+          window.clearInterval(countdown);
+          countdownStage.classList.add("hidden");
+          // Keep the fully revealed photo and name visible for 5 seconds.
+          window.setTimeout(() => {
+            identityStage.classList.add("glitch-out");
+            window.setTimeout(() => {
+              identityStage.classList.add("hidden");
+              endingStage.classList.remove("hidden");
+            }, 1000);
+          }, 5000);
+        }
+      }, 1000);
+    }
+
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      // Reload resets the complete experience and all animations.
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>
